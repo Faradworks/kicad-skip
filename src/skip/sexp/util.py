@@ -6,12 +6,18 @@ Created on Jan 29, 2024
 '''
 import sexpdata
 import re
+import urllib.request
 import logging 
 log = logging.getLogger(__name__)
 MaxLineLength = 255*3
 def loadTree(fpath:str):
-    with open(fpath, 'r') as f:
-        return sexpdata.loads(f.read())
+    if "http://" in fpath or "https://" in fpath:
+        with urllib.request.urlopen(fpath) as f:
+            return sexpdata.loads(f.read().decode('utf-8'))
+    
+    else:
+        with open(fpath, 'r') as f:
+            return sexpdata.loads(f.read())
 
 def writeTree(fpath:str, tree):
     remove_nones(tree)
